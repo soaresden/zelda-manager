@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zelda Manager</title>
+  <meta name="description" content="Suivi 100 % pour Ocarina of Time, Majora's Mask et Tri Force Heroes — par Soaresden.">
+  <link rel="icon" href="img/ico-heart.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <img src="img/ico-heart.png" alt="">
+      <span>Zelda <b>Manager</b></span>
+    </a>
+    <nav class="topnav" id="topnav"></nav>
+    <div class="top-actions">
+      <button class="lang" id="lang-btn" type="button" title="Langue / Language">FR</button>
+      <button class="icon-btn" id="menu-btn" type="button" aria-label="Sauvegarde" aria-haspopup="true">⋯</button>
+      <div class="menu" id="menu" hidden>
+        <button type="button" data-act="export"></button>
+        <button type="button" data-act="import"></button>
+        <button type="button" data-act="reset" class="danger"></button>
+      </div>
+      <input type="file" id="import-file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+  <main id="app"></main>
+  <footer class="foot" id="foot"></footer>
+
+  <script src="data/oot.js"></script>
+  <script src="data/mm.js"></script>
+  <script src="data/tfh.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
