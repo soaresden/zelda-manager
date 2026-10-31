@@ -1,6 +1,6 @@
 """Convertit les 3 classeurs Excel (dossier parent) en fichiers data/*.js pour le site.
 
-Usage :  python tools/extract_data.py
+Usage :  python tools/extract_data.py [dossier_des_xlsx]
 Les données viennent des tableaux Excel (onglets GameBDD / QST-LVL cachés compris),
 ce qui récupère la totalité du contenu, même pour les versions "Trial".
 """
@@ -12,7 +12,8 @@ import sys
 import openpyxl
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-XL_DIR = os.path.dirname(ROOT)
+# Dossier des classeurs : argument optionnel, sinon le dossier parent du site
+XL_DIR = sys.argv[1] if len(sys.argv) > 1 else os.path.dirname(ROOT)
 FILES = {
     "oot": "Zelda Ocarina Manager v7.xlsx",
     "mm": "Zelda Majora Manager v4 Trial.xlsx",
@@ -139,7 +140,7 @@ def build_oot(t):
     return {
         "id": "oot", "title": tr("Ocarina of Time", "Ocarina of Time"),
         "subtitle": tr("Atteindre les 100 %", "Helping you reach 100%"),
-        "logo": "img/oot-logo.png", "hero": "img/oot-hero.png", "theme": "oot",
+        "logo": "img/oot-logo.png", "theme": "oot",
         "version": "v7",
         "sections": [
             section("upgrades", tr("Améliorations", "Upgrades"), "ico-bag", upgrade_groups),
@@ -277,7 +278,7 @@ def build_mm(t):
     return {
         "id": "mm", "title": tr("Majora's Mask", "Majora's Mask"),
         "subtitle": tr("72 heures pour tout compléter", "72 hours to complete everything"),
-        "logo": "img/mm-logo.png", "hero": "img/mm-hero.png", "theme": "mm", "version": "v4",
+        "logo": "img/mm-logo.png", "theme": "mm", "version": "v4",
         "sections": [
             section("masks", tr("Masques", "Masks"), "ico-mask-keaton",
                     [group(tr("Masques de transformation", "Transformation masks"), transfo),
@@ -393,11 +394,81 @@ def build_tfh(t):
     }
 
 
+# --------------------------------------------------------------------------- Illustrations
+# Images reprises des classeurs (dossier img/). Section -> icône, groupe (par index) -> image,
+# item (par id) -> image.
+IMAGES = {
+    "oot": {
+        "art": ["img/oot-link-adult.png", "img/oot-link-child.png"],
+        "sections": {"upgrades": "oot-bullet-bag", "arrows": "fire-arrow", "biggoron": "oot-biggoron-sword",
+                     "skulltulas": "mm-skull-token", "hearts": "heart", "bottles": "bottle", "ocarina": "mm-link-ocarina"},
+        "groups": {"upgrades": ["oot-bullet-bag", "bomb-bag", "quiver", "oot-deku-stick", "oot-deku-nut", "oot-scale",
+                                "wallet", "potion"],
+                   "arrows": ["fire-arrow", "oot-great-fairies"], "biggoron": ["oot-biggoron-sword"],
+                   "bottles": ["bottle"], "ocarina": ["mm-link-ocarina", "oot-mask-keaton"]},
+        "items": {"arrow-1": "fire-arrow", "arrow-2": "ice-arrow", "arrow-3": "light-arrow",
+                  "spell-1": "oot-din", "spell-2": "oot-farore", "spell-3": "oot-nayru",
+                  "bottle-4": "oot-poe", "bigg-5": "oot-biggoron-sword",
+                  "mask-1": "oot-mask-keaton", "mask-2": "oot-mask-skull", "mask-3": "oot-mask-spooky",
+                  "mask-4": "oot-mask-bunny", "mask-5": "oot-mask-truth", "mask-6": "oot-mask-zora",
+                  "mask-7": "oot-mask-goron", "mask-8": "oot-mask-gerudo"},
+        "maps": {"bottles": {"src": "img/oot-map.png",
+                             "title": {"fr": "Carte de la plaine d'Hyrule — les 10 Esprits (Big Poes)",
+                                       "en": "Hyrule Field map — the 10 Big Poes"}}},
+    },
+    "mm": {
+        "art": ["img/mm-hero.png", "img/mm-kafei.png"],
+        "sections": {"masks": "mm-mask-keaton", "fairies": "mm-stray-fairy", "skulltulas": "mm-skull-token",
+                     "upgrades": "mm-razor-sword", "hearts": "heart", "quiz": "mm-mask-keaton", "bottles": "bottle",
+                     "kafei": "mm-mask-couple"},
+        "groups": {"masks": ["mm-mask-deku", "mm-mask-great-fairy"],
+                   "fairies": ["mm-stray-fairy"] * 4, "skulltulas": ["mm-skull-token"] * 2,
+                   "upgrades": ["potion", "mm-spin-attack", "mm-tunic", "mm-fairy-sword", "mm-razor-sword",
+                                "mm-gilded-sword", "wallet", "bomb-bag", "quiver", "fire-arrow"],
+                   "hearts": [], "quiz": ["mm-mask-keaton"], "bottles": ["bottle", "mm-link-ocarina"],
+                   "kafei": ["mm-kafei"]},
+        "items": dict(
+            {f"mask-{i}": f"mm-mask-{n}" for i, n in enumerate(
+                ["deku", "goron", "zora", "giant", "fierce-deity", "great-fairy", "kafei", "bremen", "blast",
+                 "kamaro", "bunny", "scents", "truth", "keaton", "postman", "don-gero", "stone", "garo", "romani",
+                 "couple", "troupe-leader", "all-night", "captain", "gibdo"], 1)},
+            **{"arrow-1": "fire-arrow", "arrow-2": "ice-arrow", "arrow-3": "light-arrow", "bottle-1": "potion"}),
+    },
+    "tfh": {
+        "art": [],
+        "sections": {"levels": "⚔️", "outfits": "👘", "materials": "💎"},
+    },
+}
+
+
+def decorate(key, data):
+    conf = IMAGES[key]
+    data["art"] = conf.get("art", [])
+    for sec in data["sections"]:
+        icon = conf["sections"].get(sec["id"], "")
+        if icon and icon.isascii():
+            sec["icon"] = f"img/{icon}.png"
+        else:
+            sec.pop("icon", None)
+            sec["emoji"] = icon
+        if sec["id"] in conf.get("maps", {}):
+            sec["map"] = conf["maps"][sec["id"]]
+        for gi, g in enumerate(sec.get("groups", [])):
+            g.pop("icons", None)
+            gimgs = conf.get("groups", {}).get(sec["id"], [])
+            if gi < len(gimgs):
+                g["img"] = f"img/{gimgs[gi]}.png"
+            for it in g["items"]:
+                if it["id"] in conf.get("items", {}):
+                    it["img"] = f"img/{conf['items'][it['id']]}.png"
+    return data
+
+
 def main():
     builders = {"oot": build_oot, "mm": build_mm, "tfh": build_tfh}
     for key, fname in FILES.items():
         path = os.path.join(XL_DIR, fname)
-        data = builders[key](load_tables(path))
+        data = decorate(key, builders[key](load_tables(path)))
         data["source"] = fname
         out = os.path.join(ROOT, "data", f"{key}.js")
         with open(out, "w", encoding="utf-8") as f:

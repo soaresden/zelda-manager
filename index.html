@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Zelda Manager</title>
   <meta name="description" content="Suivi 100 % pour Ocarina of Time, Majora's Mask et Tri Force Heroes — par Soaresden.">
-  <link rel="icon" href="img/ico-heart.png">
+  <link rel="icon" href="img/heart.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#/">
-      <img src="img/ico-heart.png" alt="">
+      <img src="img/heart.png" alt="">
       <span>Zelda <b>Manager</b></span>
     </a>
     <nav class="topnav" id="topnav"></nav>
     <div class="top-actions">
-      <button class="lang" id="lang-btn" type="button" title="Langue / Language">FR</button>
-      <button class="icon-btn" id="menu-btn" type="button" aria-label="Sauvegarde" aria-haspopup="true">⋯</button>
+      <button class="pill-btn" id="lang-btn" type="button">EN</button>
+      <button class="pill-btn" id="menu-btn" type="button" aria-haspopup="true">💾</button>
       <div class="menu" id="menu" hidden>
         <button type="button" data-act="export"></button>
         <button type="button" data-act="import"></button>
@@ -31,6 +31,16 @@
   </header>
   <main id="app"></main>
   <footer class="foot" id="foot"></footer>
+
+  <!-- Lecteur de musique : reste en place quand on change de page -->
+  <div class="music" id="music">
+    <div class="box" id="music-box" hidden>
+      <div id="music-frame"></div>
+      <div class="tracks" id="music-tracks"></div>
+      <p class="credit" id="music-credit"></p>
+    </div>
+    <button class="toggle" id="music-toggle" type="button"><span class="note">♪</span><span id="music-label"></span></button>
+  </div>
 
   <script src="data/oot.js"></script>
   <script src="data/mm.js"></script>

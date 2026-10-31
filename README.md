@@ -16,6 +16,7 @@ Les versions « Trial » contenaient déjà toutes les données dans leurs ongle
 - **Ou avec un petit serveur :** `python -m http.server 8765` dans ce dossier puis <http://localhost:8765>.
 - La progression est sauvegardée automatiquement dans le navigateur. Menu **⋯** → exporter / importer un fichier `.json` pour la sauvegarder ou la passer sur un autre appareil.
 - Bouton **FR / EN** en haut à droite.
+- Bouton **♪ Musique** en bas à droite : les musiques des anciens sites (Gerudo Valley, Song of Healing, Hytopia) via les vidéos YouTube de leurs auteurs.
 
 ## Mettre en ligne
 
@@ -38,7 +39,7 @@ index.html        page unique (routage par #/oot, #/mm, #/tfh)
 css/style.css     thème (vert OoT, violet Majora, bleu TFH, comme les anciens sites ; clair/sombre)
 js/app.js         application (sans dépendance)
 data/*.js         données générées depuis les Excel
-img/              logos et icônes repris des classeurs
+img/              toutes les images reprises des classeurs (masques, objets, carte des Esprits…)
 tools/            script d'extraction
 ```
 
